@@ -2,27 +2,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bienvenido a Cedig Guatemala</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cedig Guatemala - Aula Virtual</title>
   <style>
     body {
-      background-color: #f0f8ff;
       font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    header {
+      background: #007acc;
+      color: white;
+      padding: 15px;
       text-align: center;
-      padding-top: 100px;
     }
-    h1 {
+    nav {
+      background: #eee;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
       color: #007acc;
+      font-weight: bold;
     }
-    p {
-      font-size: 18px;
-      color: #333;
+    main {
+      padding: 30px;
+      text-align: center;
+    }
+    .course-box {
+      background: white;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .btn {
+      display: inline-block;
+      background: #007acc;
+      color: white;
+      padding: 10px 15px;
+      margin-top: 15px;
+      border-radius: 5px;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <h1>¡Bienvenido al sitio de Cedig Guatemala!</h1>
-  <p>Este sitio está funcionando correctamente en GitHub Pages.</p>
+  <header>
+    <h1>CEDIG Guatemala</h1>
+    <p>Aula Virtual de Capacitación</p>
+  </header>
+
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#">Mis Cursos</a>
+    <a href="#">Cerrar Sesión</a>
+  </nav>
+
+  <main>
+    <div class="course-box">
+      <h2>Curso de Ejemplo</h2>
+      <p>Este es un curso de ejemplo que pronto estará disponible para nuestros estudiantes.</p>
+      <a href="#" class="btn">Ver lección</a>
+    </div>
+  </main>
 </body>
 </html>
