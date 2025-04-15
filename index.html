@@ -6,28 +6,43 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 50px;
+      background: #eef2f7;
+      margin: 0;
+      padding: 0;
+      text-align: center;
     }
+
+    header {
+      background-color: #007acc;
+      padding: 20px 0;
+      color: white;
+    }
+
+    header img {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+
     h1 {
-      color: #007acc;
+      margin: 10px 0 0 0;
     }
-    .login-box {
+
+    .login-box, .course-box, .info-box {
       background: white;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      width: 300px;
-      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+      width: 90%;
+      max-width: 500px;
+      margin: 30px auto;
     }
+
     input {
       width: 90%;
       padding: 10px;
       margin: 10px 0;
     }
+
     button {
       background: #007acc;
       color: white;
@@ -35,23 +50,63 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin-top: 10px;
     }
+
     .error {
       color: red;
       margin-top: 10px;
     }
-    .course-box {
-      background: white;
-      padding: 20px;
-      margin-top: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    .info-box {
+      max-width: 700px;
+      text-align: left;
+    }
+
+    .info-box h2 {
+      color: #007acc;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    a {
+      color: #007acc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #logoutBtn {
+      margin-top: 20px;
+      background: #d9534f;
     }
   </style>
 </head>
 <body>
 
-  <h1>CEDIG Guatemala</h1>
+  <header>
+    <img src="https://raw.githubusercontent.com/cedig-guatemala/Cedig-aulas/main/logo.png" alt="Logo CEDIG">
+    <h1>CEDIG Guatemala</h1>
+    <p>Corporación Educativa Digital de Guatemala</p>
+  </header>
+
+  <div class="info-box">
+    <h2>Misión</h2>
+    <p>Brindar acceso a educación digital práctica, accesible y actualizada que permita a nuestros estudiantes desarrollar habilidades útiles para emprender o mejorar su vida profesional.</p>
+
+    <h2>Visión</h2>
+    <p>Ser una plataforma reconocida en Guatemala y Centroamérica por capacitar digitalmente a miles de personas, impulsando su crecimiento personal y laboral con calidad, confianza y compromiso.</p>
+  </div>
+
   <div class="login-box" id="login-box">
     <h2>Iniciar Sesión</h2>
     <input type="text" id="username" placeholder="Usuario">
@@ -62,19 +117,25 @@
 
   <div class="course-box" id="course-box" style="display:none;">
     <h2 id="welcome"></h2>
-    <p>Aquí están tus cursos:</p>
+    <p>Tus cursos disponibles:</p>
     <ul id="course-list"></ul>
+    <button id="logoutBtn" onclick="logout()">Cerrar sesión</button>
   </div>
 
   <script>
     const users = {
-      "cliente1": { password: "curso123", cursos: ["Curso de Panadería", "Curso de Celulares"] },
-      "cliente2": { password: "abc123", cursos: ["Curso de Repostería"] }
+      "cliente1": { password: "curso123", cursos: [
+        { nombre: "Curso de Panadería", link: "https://www.example.com/panaderia" },
+        { nombre: "Curso de Celulares", link: "https://www.example.com/celulares" }
+      ]},
+      "cliente2": { password: "abc123", cursos: [
+        { nombre: "Curso de Repostería", link: "https://www.example.com/reposteria" }
+      ]}
     };
 
     function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
       const errorDiv = document.getElementById("error");
 
       if (users[user] && users[user].password === pass) {
@@ -85,12 +146,20 @@
         list.innerHTML = "";
         users[user].cursos.forEach(curso => {
           const li = document.createElement("li");
-          li.textContent = curso;
+          li.innerHTML = `<a href="${curso.link}" target="_blank">${curso.nombre}</a>`;
           list.appendChild(li);
         });
       } else {
         errorDiv.textContent = "Usuario o contraseña incorrectos";
       }
+    }
+
+    function logout() {
+      document.getElementById("login-box").style.display = "block";
+      document.getElementById("course-box").style.display = "none";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("error").textContent = "";
     }
   </script>
 
