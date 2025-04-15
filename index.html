@@ -1,74 +1,98 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cedig Guatemala - Aula Virtual</title>
+  <title>CEDIG Guatemala - Iniciar Sesión</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f9f9f9;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
     }
-    header {
+    h1 {
+      color: #007acc;
+    }
+    .login-box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
       background: #007acc;
       color: white;
-      padding: 15px;
-      text-align: center;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    nav {
-      background: #eee;
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #007acc;
-      font-weight: bold;
-    }
-    main {
-      padding: 30px;
-      text-align: center;
+    .error {
+      color: red;
+      margin-top: 10px;
     }
     .course-box {
       background: white;
       padding: 20px;
-      max-width: 600px;
-      margin: auto;
+      margin-top: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .btn {
-      display: inline-block;
-      background: #007acc;
-      color: white;
-      padding: 10px 15px;
-      margin-top: 15px;
-      border-radius: 5px;
-      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>CEDIG Guatemala</h1>
-    <p>Aula Virtual de Capacitación</p>
-  </header>
 
-  <nav>
-    <a href="#">Inicio</a>
-    <a href="#">Mis Cursos</a>
-    <a href="#">Cerrar Sesión</a>
-  </nav>
+  <h1>CEDIG Guatemala</h1>
+  <div class="login-box" id="login-box">
+    <h2>Iniciar Sesión</h2>
+    <input type="text" id="username" placeholder="Usuario">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="login()">Ingresar</button>
+    <div class="error" id="error"></div>
+  </div>
 
-  <main>
-    <div class="course-box">
-      <h2>Curso de Ejemplo</h2>
-      <p>Este es un curso de ejemplo que pronto estará disponible para nuestros estudiantes.</p>
-      <a href="#" class="btn">Ver lección</a>
-    </div>
-  </main>
+  <div class="course-box" id="course-box" style="display:none;">
+    <h2 id="welcome"></h2>
+    <p>Aquí están tus cursos:</p>
+    <ul id="course-list"></ul>
+  </div>
+
+  <script>
+    const users = {
+      "cliente1": { password: "curso123", cursos: ["Curso de Panadería", "Curso de Celulares"] },
+      "cliente2": { password: "abc123", cursos: ["Curso de Repostería"] }
+    };
+
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      const errorDiv = document.getElementById("error");
+
+      if (users[user] && users[user].password === pass) {
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("course-box").style.display = "block";
+        document.getElementById("welcome").innerText = "Bienvenido, " + user;
+        const list = document.getElementById("course-list");
+        list.innerHTML = "";
+        users[user].cursos.forEach(curso => {
+          const li = document.createElement("li");
+          li.textContent = curso;
+          list.appendChild(li);
+        });
+      } else {
+        errorDiv.textContent = "Usuario o contraseña incorrectos";
+      }
+    }
+  </script>
+
 </body>
 </html>
