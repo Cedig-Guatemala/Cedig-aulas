@@ -1,167 +1,998 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>CEDIG Guatemala - Iniciar Sesión</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curso Interactivo</title> <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #eef2f7;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+      background: linear-gradient(135deg, #dbeafe 0%, #fef3c7 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    header {
-      background-color: #007acc;
-      padding: 20px 0;
-      color: white;
+    .card { transition: all 0.3s ease; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+    .progress-bar { transition: width 0.5s ease-in-out; }
+    .fade-in { animation: fadeIn 0.5s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .video-container { position: relative; overflow: hidden; border-radius: 1rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); }
+    iframe { border-radius: 0.75rem; transition: all 0.3s ease; }
+    .nav-button { transition: all 0.2s ease; }
+    .nav-button:hover { transform: translateY(-2px); }
+    .material-link { transition: all 0.2s ease; }
+    .material-link:hover { transform: translateX(3px); }
+    .module-complete { background: linear-gradient(to right, rgba(16, 185, 129, 0.1), transparent); }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); } }
+    .pin-input { text-align: center; } /* Quité letter-spacing, puede dar problemas */
+    .shake { animation: shake 0.5s; }
+    @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+     /* Estilo para el mensaje de error */
+    .error-popup {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #f8d7da; /* Rojo claro */
+        color: #721c24; /* Rojo oscuro */
+        padding: 15px 20px;
+        border: 1px solid #f5c6cb; /* Borde rojo */
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        max-width: 300px;
+        font-size: 0.9rem;
     }
-
-    header img {
-      max-height: 80px;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      margin: 10px 0 0 0;
-    }
-
-    .login-box, .course-box, .info-box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.15);
-      width: 90%;
-      max-width: 500px;
-      margin: 30px auto;
-    }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-    }
-
-    button {
-      background: #007acc;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
-
-    .info-box {
-      max-width: 700px;
-      text-align: left;
-    }
-
-    .info-box h2 {
-      color: #007acc;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      margin: 10px 0;
-    }
-
-    a {
-      color: #007acc;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    #logoutBtn {
-      margin-top: 20px;
-      background: #d9534f;
+    .error-popup.show {
+        opacity: 1;
     }
   </style>
 </head>
-<body>
-
-  <header>
-    <img src="https://raw.githubusercontent.com/cedig-guatemala/Cedig-aulas/main/logo.png" alt="Logo CEDIG">
-    <h1>CEDIG Guatemala</h1>
-    <p>Corporación Educativa Digital de Guatemala</p>
-  </header>
-
-  <div class="info-box">
-    <h2>Misión</h2>
-    <p>Brindar acceso a educación digital práctica, accesible y actualizada que permita a nuestros estudiantes desarrollar habilidades útiles para emprender o mejorar su vida profesional.</p>
-
-    <h2>Visión</h2>
-    <p>Ser una plataforma reconocida en Guatemala y Centroamérica por capacitar digitalmente a miles de personas, impulsando su crecimiento personal y laboral con calidad, confianza y compromiso.</p>
-  </div>
-
-  <div class="login-box" id="login-box">
-    <h2>Iniciar Sesión</h2>
-    <input type="text" id="username" placeholder="Usuario">
-    <input type="password" id="password" placeholder="Contraseña">
-    <button onclick="login()">Ingresar</button>
-    <div class="error" id="error"></div>
-  </div>
-
-  <div class="course-box" id="course-box" style="display:none;">
-    <h2 id="welcome"></h2>
-    <p>Tus cursos disponibles:</p>
-    <ul id="course-list"></ul>
-    <button id="logoutBtn" onclick="logout()">Cerrar sesión</button>
-  </div>
+<body class="text-gray-800 min-h-screen m-0 p-0">
+  <div id="app" class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 min-h-screen">
+     </div>
 
   <script>
-    const users = {
-      "cliente1": { password: "curso123", cursos: [
-        { nombre: "Curso de Panadería", link: "https://www.example.com/panaderia" },
-        { nombre: "Curso de Celulares", link: "https://www.example.com/celulares" }
-      ]},
-      "cliente2": { password: "abc123", cursos: [
-        { nombre: "Curso de Repostería", link: "https://www.example.com/reposteria" }
-      ]}
-    };
+    // ***** CONFIGURACIÓN *****
+    // URL pública del CSV de tu hoja de Google Sheets (para cargar el contenido del curso)
+    // Formato: https://docs.google.com/spreadsheets/d/e/TU_IDENTIFICADOR_UNICO/pub?output=csv
+    const googleSheetsUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxY9EUU7Ng-Fsxzqehtwl7Dv_3QZOQXBiWuPBBVfmp_U9Cjztqt78HjTWSvI7mREmdH_J8SR4Ajmyt/pub?output=csv"; 
 
-    function login() {
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-      const errorDiv = document.getElementById("error");
+    // !!! REEMPLAZA ESTO con la URL de tu Google Apps Script DESPLEGADO como Aplicación Web !!!
+    const appsScriptUrl = "https://script.google.com/macros/s/AKfycbz8YGMEzoDrF1uV6vX2WhAAswLqTgD3qDnpfcSh0SsWjEgYdN2b3xD4LWDcx8rp2TiaSw/exec"; 
+    // *************************
 
-      if (users[user] && users[user].password === pass) {
-        document.getElementById("login-box").style.display = "none";
-        document.getElementById("course-box").style.display = "block";
-        document.getElementById("welcome").innerText = "Bienvenido, " + user;
-        const list = document.getElementById("course-list");
-        list.innerHTML = "";
-        users[user].cursos.forEach(curso => {
-          const li = document.createElement("li");
-          li.innerHTML = `<a href="${curso.link}" target="_blank">${curso.nombre}</a>`;
-          list.appendChild(li);
+    const app = document.getElementById("app");
+    let curso = { nombre: "Cargando..." };
+    let pagina = "login"; // Página inicial
+    let moduloActual = null;
+    let claseActual = null;
+    let vistas = {}; // Progreso del usuario (se carga o se usa localStorage)
+    let linkCertificado = "";
+    let userPin = ""; // PIN del usuario si inicia sesión
+    let isLoggedIn = false; // Estado de autenticación
+    let isLoading = false; // Para evitar múltiples clics mientras carga
+
+    // --- Funciones de Ayuda ---
+
+    function debugLog(message, data) {
+      console.log(`DEBUG: ${message}`, data);
+    }
+
+    function mostrarError(mensaje, duracion = 6000) {
+        console.error("Mostrando Error:", mensaje); // Loguea también en consola
+        let errorDiv = document.getElementById("error-popup");
+        if (!errorDiv) {
+            errorDiv = document.createElement("div");
+            errorDiv.id = "error-popup";
+            errorDiv.className = "error-popup";
+            document.body.appendChild(errorDiv);
+        }
+        
+        errorDiv.textContent = mensaje;
+        errorDiv.classList.add("show"); // Muestra el div
+
+        // Ocultar después de la duración
+        setTimeout(() => {
+            errorDiv.classList.remove("show");
+            // Opcional: remover el div del DOM después de ocultarlo
+            // setTimeout(() => errorDiv.remove(), 500); 
+        }, duracion);
+    }
+
+
+    // --- Funciones de Interacción con Apps Script ---
+
+    async function cargarProgreso(pin) {
+        if (isLoading) return false;
+        isLoading = true;
+        debugLog("Intentando cargar progreso para PIN:", pin);
+        
+        try {
+            const response = await fetch(`${appsScriptUrl}?action=cargar&pin=${encodeURIComponent(pin)}`, {
+                method: 'GET', // GET es el método por defecto, pero ser explícito ayuda
+                headers: { 
+                    // No se necesita Content-Type para GET sin body
+                }
+            });
+
+            if (!response.ok) {
+                // Intenta leer el mensaje de error si el servidor lo envió como JSON
+                let errorMsg = `Error HTTP ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData && errorData.message) {
+                         errorMsg = errorData.message;
+                    }
+                } catch (jsonError) { /* Ignorar si no es JSON */ }
+                
+                throw new Error(errorMsg); // Lanza el error para ser capturado abajo
+            }
+
+            const data = await response.json();
+            debugLog("Respuesta de cargar progreso:", data);
+
+            if (data.success) {
+                try {
+                    // Parsea los datos recibidos
+                    vistas = JSON.parse(data.vistas || '{}');
+                    const ultima = JSON.parse(data.ultimaClase || 'null');
+                    debugLog("Vistas cargadas:", vistas);
+                    debugLog("Última clase cargada:", ultima);
+
+                    // Decide a qué página ir
+                    if (ultima && curso.modulos[ultima.modulo] && curso.modulos[ultima.modulo].clases[ultima.clase]) {
+                        moduloActual = ultima.modulo;
+                        claseActual = ultima.clase;
+                        pagina = "video"; // Ir directamente al último video visto
+                    } else {
+                        pagina = "modulos"; // Ir a la lista de módulos
+                    }
+
+                    isLoggedIn = true;
+                    userPin = pin;
+                    render(); // Actualiza la interfaz
+                    isLoading = false;
+                    return true; // Éxito
+                } catch (parseError) {
+                    console.error("Error al procesar datos del servidor:", parseError);
+                    throw new Error("Se recibió una respuesta inesperada del servidor.");
+                }
+            } else {
+                 throw new Error(data.message || "El servidor indicó un error al cargar."); // Usa el mensaje del servidor
+            }
+        } catch (error) {
+            console.error("Error en la solicitud para cargar progreso:", error);
+            mostrarError(`Error al cargar progreso: ${error.message}`);
+            isLoading = false;
+            return false; // Fallo
+        }
+    }
+
+    async function guardarProgreso() {
+      if (!isLoggedIn || !userPin) {
+        debugLog("No guardando: usuario no autenticado", { isLoggedIn, userPin });
+        return; // No guardar si no está logueado con PIN
+      }
+      if (isLoading) return; // Evitar guardados múltiples si ya hay uno en curso
+      isLoading = true; 
+
+      try {
+        debugLog("Intentando guardar progreso", { pin: userPin, modulo: moduloActual, clase: claseActual });
+
+        const dataToSend = {
+          action: "guardar",
+          pin: userPin,
+          vistas: JSON.stringify(vistas), // Asegúrate que 'vistas' es un objeto JS
+          ultimaClase: JSON.stringify({ modulo: moduloActual, clase: claseActual }) // Asegúrate que moduloActual y claseActual tienen valores válidos
+        };
+        debugLog("Datos a enviar para guardar:", dataToSend);
+
+        const response = await fetch(appsScriptUrl, {
+          method: 'POST',
+          mode: 'cors', // NECESARIO para POST a diferente origen
+          headers: {
+            'Content-Type': 'application/json' // NECESARIO para enviar JSON
+          },
+          body: JSON.stringify(dataToSend) // Convierte el objeto JS a string JSON
+          // redirect: 'follow' // Opción por defecto, manejar redirecciones si las hubiera
         });
-      } else {
-        errorDiv.textContent = "Usuario o contraseña incorrectos";
+
+        isLoading = false; // Permitir nuevos guardados
+
+         if (!response.ok) {
+             // Intenta leer el mensaje de error si el servidor lo envió como JSON
+             let errorMsg = `Error HTTP ${response.status}: ${response.statusText}`;
+             try {
+                 const errorData = await response.json();
+                 if (errorData && errorData.message) {
+                     errorMsg = errorData.message;
+                 }
+             } catch (jsonError) { /* Ignorar si no es JSON */ }
+             throw new Error(errorMsg);
+         }
+
+        const result = await response.json();
+        debugLog("Respuesta del servidor al guardar:", result);
+
+        if (!result.success) {
+          // Muestra el error específico devuelto por el script
+          console.error("Error devuelto por el script al guardar progreso:", result.message);
+          mostrarError(`Error al guardar: ${result.message}`);
+        } else {
+           console.log("Progreso guardado exitosamente en el servidor.");
+           // Opcional: mostrar mensaje de éxito temporal
+        }
+
+      } catch (error) {
+          isLoading = false; // Asegurarse de resetear isLoading en caso de error
+          console.error("Error técnico guardando progreso:", error);
+          // Muestra un error genérico o el específico si está disponible
+           mostrarError(`No se pudo guardar el progreso: ${error.message}. Verifica tu conexión.`);
+      }
+    }
+    
+    async function registrarPin(pin) {
+        if (isLoading) return false;
+        isLoading = true;
+        debugLog("Intentando registrar PIN:", pin);
+
+        // Validación básica del formato del PIN en el cliente
+        if (!pin || pin.length !== 6 || !/^\d+$/.test(pin)) {
+            console.log("PIN inválido para registro (formato):", pin);
+            mostrarError("El PIN debe ser de 6 dígitos numéricos.");
+            isLoading = false;
+            return false;
+        }
+
+        try {
+            const dataToSend = {
+                action: "registrar",
+                pin: pin
+            };
+            debugLog("Datos a enviar para registrar:", dataToSend);
+
+            const response = await fetch(appsScriptUrl, {
+                method: 'POST',
+                mode: 'cors', // Necesario
+                headers: {
+                    'Content-Type': 'application/json' // Necesario
+                },
+                body: JSON.stringify(dataToSend)
+                // redirect: 'follow' 
+            });
+
+            isLoading = false;
+
+            if (!response.ok) {
+                let errorMsg = `Error HTTP ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                     if (errorData && errorData.message) {
+                         errorMsg = errorData.message; // Usar mensaje del servidor si existe
+                     }
+                } catch (jsonError) { /* Ignorar */ }
+                throw new Error(errorMsg);
+            }
+
+            const result = await response.json();
+            debugLog("Respuesta de registro:", result);
+
+            if (result.success) {
+                isLoggedIn = true;
+                userPin = pin;
+                vistas = {}; // Reiniciar vistas para nuevo usuario
+                pagina = "modulos"; // Llevar a la vista de módulos
+                render(); // Actualizar UI
+                return true; // Éxito
+            } else {
+                // Mostrar mensaje de error específico del servidor (ej: PIN ya existe)
+                throw new Error(result.message || "El servidor indicó un error al registrar.");
+            }
+        } catch (error) {
+             isLoading = false;
+             console.error("Error técnico al registrar PIN:", error);
+             mostrarError(`Error al registrar: ${error.message}`);
+             return false; // Fallo
+        }
+    }
+
+    // --- Lógica de la Aplicación ---
+
+    // Carga inicial de datos del curso desde el CSV público
+    async function obtenerDatos() {
+      app.innerHTML = `
+        <div class="flex flex-col items-center justify-center h-64">
+          <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="mt-4 text-gray-600">Cargando el curso...</p>
+        </div>
+      `;
+      try {
+        const respuesta = await fetch(googleSheetsUrl);
+        if (!respuesta.ok) {
+            throw new Error(`No se pudo cargar el CSV del curso: ${respuesta.statusText}`);
+        }
+        const texto = await respuesta.text();
+        const filas = texto.split("\n").map(row => row.split(",").map(cell => cell.trim())); // Limpiar espacios
+
+        // Asumiendo estructura del CSV:
+        // Fila 1: Nombre del curso, Link Certificado
+        // Fila 2: Cabeceras (Ignorar o usar si es necesario) - Ajustar índice si no hay cabecera
+        // Fila 3 en adelante: Modulo, Clase, VideoURL, Mat1Nombre, Mat1Link, Mat2Nombre, Mat2Link ...
+        
+        // Ajustar índices según tu CSV real
+        linkCertificado = filas[0][1] || ""; // Columna B de la primera fila
+        curso.nombre = filas[1][1] || "Curso Interactivo"; // Columna B de la segunda fila (o ajusta si es diferente)
+        curso.modulos = [];
+
+        let moduloActualObj = null;
+        // Empezar desde la fila que contiene la primera clase (ajusta el índice 2 si es necesario)
+        filas.slice(2).forEach((fila) => { 
+            // Validar que la fila tenga al menos los datos esperados (Módulo, Clase)
+            if (!fila[1] || !fila[2]) return; // Saltar filas incompletas
+
+            const moduloNombre = fila[1];
+            const claseTitulo = fila[2];
+            const videoUrl = fila[3] || null; // Columna D
+
+            // Si es un nuevo módulo
+            if (!moduloActualObj || moduloActualObj.nombre !== moduloNombre) {
+                moduloActualObj = { nombre: moduloNombre, clases: [] };
+                curso.modulos.push(moduloActualObj);
+            }
+
+            // Extraer materiales (asumiendo pares Nombre, Link)
+            let materiales = [];
+            for (let i = 4; i < fila.length; i += 2) {
+                if (fila[i] && fila[i+1]) { // Si hay nombre y link
+                    materiales.push({ nombre: fila[i], link: fila[i+1] });
+                }
+            }
+
+            moduloActualObj.clases.push({
+                titulo: claseTitulo,
+                video: videoUrl,
+                materiales: materiales
+            });
+        });
+        
+        debugLog("Datos del curso cargados:", curso);
+        // Una vez cargado el curso, renderizar la página actual (que inicialmente es 'login')
+        render(); 
+      } catch (error) {
+        console.error("Error fatal al cargar datos del curso:", error);
+        app.innerHTML = `
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+            <p><strong>Error Crítico:</strong> No se pudieron cargar los datos del curso desde la hoja de cálculo.</p>
+            <p class="text-sm mt-1">Detalle: ${error.message}</p>
+            <p class="text-sm mt-2">Verifica que la URL del CSV (<code class="text-xs bg-red-200 p-1 rounded">${googleSheetsUrl}</code>) sea correcta y que la hoja esté publicada.</p>
+            <button onclick="location.reload()" class="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+              Reintentar Cargar
+            </button>
+          </div>
+        `;
       }
     }
 
-    function logout() {
-      document.getElementById("login-box").style.display = "block";
-      document.getElementById("course-box").style.display = "none";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("error").textContent = "";
+    function calcularProgresoTotal() {
+      let totalClases = 0;
+      let totalVistas = 0;
+      
+      curso.modulos.forEach((modulo, i) => {
+        totalClases += modulo.clases.length;
+        const vistasModulo = vistas[i] || []; // vistas[i] debe ser un array de índices de clases vistas
+        // Asegurarse que contamos vistas únicas por si acaso
+        totalVistas += new Set(vistasModulo).size; 
+      });
+      
+      return {
+        totalClases,
+        totalVistas,
+        porcentaje: totalClases > 0 ? Math.round((totalVistas / totalClases) * 100) : 0
+      };
     }
-  </script>
+    
+    // Función principal para dibujar la interfaz según la página actual
+    function render() {
+      debugLog("Renderizando página:", pagina, { moduloActual, claseActual, isLoggedIn });
+      app.innerHTML = ""; // Limpiar contenido anterior
+      
+      // Header común (excepto en login)
+      if (pagina !== "login") {
+        const header = document.createElement("header");
+        header.className = "mb-8";
+        header.innerHTML = `
+          <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-2">${curso.nombre}</h1>
+          ${isLoggedIn ? `
+            <div class="flex justify-center">
+              <div class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+                <i class="fas fa-user-check mr-1"></i> Sesión iniciada con PIN: ${userPin}
+              </div>
+            </div>
+          ` : `
+            <div class="flex justify-center">
+                <div class="bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full">
+                    <i class="fas fa-user-clock mr-1"></i> Sesión de invitado (progreso no guardado en la nube)
+                </div>
+            </div>
+          `}
+        `;
+        app.appendChild(header);
+      }
 
+      // --- Renderizado de cada página ---
+
+      if (pagina === "login") {
+        const loginContainer = document.createElement("div");
+        loginContainer.className = "min-h-screen flex items-center justify-center";
+        loginContainer.innerHTML = `
+          <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md fade-in">
+            <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6">${curso.nombre}</h1>
+            
+            <div class="mb-8 text-center">
+              <p class="text-gray-600 mb-2">Ingresa tu PIN de 6 dígitos para guardar tu progreso o regístrate si eres nuevo.</p>
+            </div>
+            
+            <div class="mb-6">
+              <input type="text" id="pin-input" class="w-full px-4 py-3 border-2 border-blue-300 rounded-xl text-center text-2xl focus:outline-none focus:border-blue-500" 
+                     placeholder="______" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+              <p id="pin-error" class="hidden text-red-500 text-sm mt-2 text-center">Mensaje de error aquí.</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+              <button id="login-btn" class="w-full sm:w-1/2 bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition disabled:opacity-50">
+                <i class="fas fa-sign-in-alt mr-1"></i> Iniciar sesión
+              </button>
+              <button id="register-btn" class="w-full sm:w-1/2 bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition disabled:opacity-50">
+                 <i class="fas fa-user-plus mr-1"></i> Registrar nuevo
+              </button>
+            </div>
+            
+            <div class="text-center">
+              <button id="guest-btn" class="text-gray-500 hover:text-gray-700 text-sm">
+                <i class="fas fa-user-clock mr-1"></i> Entrar sin PIN (como invitado)
+                <p class="text-xs text-gray-400 mt-1">Tu progreso solo se guardará en este navegador</p>
+              </button>
+            </div>
+          </div>
+        `;
+        app.appendChild(loginContainer);
+        
+        // Añadir eventos a los botones de login después de que existan en el DOM
+        setTimeout(() => { // Pequeño delay para asegurar que el DOM está listo
+          const pinInput = document.getElementById("pin-input");
+          const pinError = document.getElementById("pin-error");
+          const loginBtn = document.getElementById("login-btn");
+          const registerBtn = document.getElementById("register-btn");
+          const guestBtn = document.getElementById("guest-btn");
+
+          // Función para manejar errores de PIN visualmente
+          function showPinError(message) {
+              pinError.textContent = message;
+              pinError.classList.remove("hidden");
+              pinInput.classList.add("border-red-500", "shake");
+              loginBtn.disabled = false; // Habilitar botones de nuevo
+              registerBtn.disabled = false;
+              setTimeout(() => {
+                  pinInput.classList.remove("border-red-500", "shake");
+              }, 1000);
+          }
+
+          // Evento Login
+          loginBtn.addEventListener("click", async () => {
+              const pin = pinInput.value.trim();
+              if (pin.length !== 6 || !/^\d+$/.test(pin)) {
+                  showPinError("El PIN debe tener 6 dígitos numéricos.");
+                  return;
+              }
+              loginBtn.disabled = true; // Deshabilitar botones mientras carga
+              registerBtn.disabled = true;
+              pinError.classList.add("hidden"); // Ocultar error anterior
+
+              const success = await cargarProgreso(pin);
+              if (!success) {
+                  // El error ya se muestra desde cargarProgreso
+                  loginBtn.disabled = false;
+                  registerBtn.disabled = false;
+              }
+              // Si success es true, cargarProgreso ya llamó a render()
+          });
+          
+          // Evento Registrar
+          registerBtn.addEventListener("click", async () => {
+              const pin = pinInput.value.trim();
+               if (pin.length !== 6 || !/^\d+$/.test(pin)) {
+                  showPinError("El PIN debe tener 6 dígitos numéricos.");
+                  return;
+              }
+              loginBtn.disabled = true;
+              registerBtn.disabled = true;
+              pinError.classList.add("hidden");
+
+              const success = await registrarPin(pin);
+               if (!success) {
+                  // El error ya se muestra desde registrarPin
+                  loginBtn.disabled = false;
+                  registerBtn.disabled = false;
+              }
+               // Si success es true, registrarPin ya llamó a render()
+          });
+          
+          // Evento Entrar como Invitado
+          guestBtn.addEventListener("click", () => {
+              isLoggedIn = false;
+              userPin = "";
+              try {
+                  // Intentar cargar progreso desde localStorage
+                  vistas = JSON.parse(localStorage.getItem("vistas_invitado") || "{}");
+                  const ultima = JSON.parse(localStorage.getItem("ultimaClase_invitado") || "null");
+                  
+                  if (ultima && curso.modulos[ultima.modulo] && curso.modulos[ultima.modulo].clases[ultima.clase]) {
+                      moduloActual = ultima.modulo;
+                      claseActual = ultima.clase;
+                      pagina = "video";
+                  } else {
+                      pagina = "modulos";
+                  }
+              } catch (e) {
+                  console.error("Error al leer localStorage:", e);
+                  vistas = {};
+                  pagina = "modulos";
+              }
+              render();
+          });
+
+          // Permitir enviar con Enter en el input PIN (simula click en Login)
+          pinInput.addEventListener("keypress", function(event) {
+              if (event.key === "Enter") {
+                  event.preventDefault(); // Evitar envío de formulario si lo hubiera
+                  loginBtn.click(); 
+              }
+          });
+
+        }, 100); // Fin setTimeout
+
+      } else if (pagina === "modulos") {
+        // --- Página de Lista de Módulos ---
+        const progreso = calcularProgresoTotal();
+        const progresoEl = document.createElement("div");
+        progresoEl.className = "mb-10 bg-white p-4 rounded-xl shadow-lg fade-in";
+        progresoEl.innerHTML = `
+          <h2 class="text-xl sm:text-2xl font-semibold mb-3">Progreso General</h2>
+          <div class="h-5 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-500 to-green-500 progress-bar" 
+                 style="width: ${progreso.porcentaje}%;"></div>
+          </div>
+          <div class="flex justify-between mt-2 text-sm text-gray-600">
+            <span>${progreso.totalVistas} de ${progreso.totalClases} clases completadas</span>
+            <span>${progreso.porcentaje}%</span>
+          </div>
+        `;
+        app.appendChild(progresoEl);
+
+        const modulosContainer = document.createElement("div");
+        modulosContainer.className = "space-y-4 fade-in";
+        
+        curso.modulos.forEach((modulo, i) => {
+          const total = modulo.clases.length;
+          const vistasModulo = vistas[i] || [];
+          const vistasUnicas = new Set(vistasModulo).size;
+          const porcentaje = total > 0 ? Math.round((vistasUnicas / total) * 100) : 0;
+          const completo = porcentaje === 100;
+          
+          const moduloCard = document.createElement("div");
+          moduloCard.className = `card bg-white rounded-2xl shadow-md overflow-hidden ${completo ? 'module-complete' : ''}`;
+          moduloCard.innerHTML = `
+            <div class="p-5 cursor-pointer hover:bg-blue-50 transition" onclick="seleccionarModulo(${i})">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg sm:text-xl font-semibold">${modulo.nombre}</h3>
+                <span class="bg-${completo ? 'green' : 'blue'}-100 text-${completo ? 'green' : 'blue'}-800 text-xs sm:text-sm py-1 px-3 rounded-full">
+                  ${vistasUnicas}/${total} clases
+                </span>
+              </div>
+              <div class="mt-4">
+                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-${completo ? 'green-500' : 'blue-500'} progress-bar" style="width: ${porcentaje}%;"></div>
+                </div>
+                <div class="flex justify-between mt-1 text-xs sm:text-sm text-gray-600">
+                  <span>${porcentaje}% completado</span>
+                  ${completo ? '<span class="text-green-600 font-medium"><i class="fas fa-check-circle"></i> Completado</span>' : ''}
+                </div>
+              </div>
+            </div>
+          `;
+          modulosContainer.appendChild(moduloCard);
+        });
+        app.appendChild(modulosContainer);
+        
+        // Botón para continuar donde lo dejaste (si hay progreso guardado)
+        if (moduloActual !== null && claseActual !== null && curso.modulos[moduloActual] && curso.modulos[moduloActual].clases[claseActual]) {
+          const continuarBtn = document.createElement("button");
+          continuarBtn.className = "fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition pulse flex items-center z-10";
+          continuarBtn.innerHTML = `
+            <i class="fas fa-play-circle mr-2"></i> Continuar Clase
+          `;
+          continuarBtn.onclick = () => {
+            pagina = "video";
+            render();
+          };
+          app.appendChild(continuarBtn);
+        }
+        
+        // Botón para cerrar sesión (solo si está con PIN)
+        if (isLoggedIn) {
+          const logoutBtn = document.createElement("button");
+          logoutBtn.className = "fixed bottom-6 left-6 bg-gray-700 text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition z-10";
+          logoutBtn.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Salir`;
+          logoutBtn.onclick = () => {
+            isLoggedIn = false;
+            userPin = "";
+            vistas = {};
+            moduloActual = null;
+            claseActual = null;
+            pagina = "login";
+            // Opcional: Limpiar localStorage de invitado también?
+            localStorage.removeItem("vistas_invitado");
+            localStorage.removeItem("ultimaClase_invitado");
+            render();
+          };
+          app.appendChild(logoutBtn);
+        }
+
+      } else if (pagina === "clases") {
+        // --- Página de Lista de Clases de un Módulo ---
+         if (moduloActual === null || !curso.modulos[moduloActual]) {
+             console.error("Error: Módulo actual no válido.");
+             mostrarError("Error al cargar las clases del módulo.");
+             pagina = 'modulos'; // Volver a la lista de módulos
+             render();
+             return; // Detener renderizado de esta página
+         }
+        const modulo = curso.modulos[moduloActual];
+
+        // Migas de pan
+        const breadcrumb = document.createElement("div");
+        breadcrumb.className = "flex items-center text-sm text-gray-600 mb-6 fade-in";
+        breadcrumb.innerHTML = `
+          <button class="hover:text-blue-700 flex items-center" onclick="irAModulos()">
+            <i class="fas fa-home mr-1"></i> Inicio
+          </button>
+          <span class="mx-2">›</span>
+          <span class="font-medium text-gray-800">${modulo.nombre}</span>
+        `;
+        app.appendChild(breadcrumb);
+
+        const modTitle = document.createElement("h2");
+        modTitle.className = "text-2xl font-bold mb-6 fade-in";
+        modTitle.innerText = modulo.nombre;
+        app.appendChild(modTitle);
+        
+        const total = modulo.clases.length;
+        const vistasModulo = vistas[moduloActual] || [];
+        const vistasUnicas = new Set(vistasModulo).size;
+        const porcentaje = total > 0 ? Math.round((vistasUnicas / total) * 100) : 0;
+        const barra = document.createElement("div");
+        barra.className = "mb-8 fade-in";
+        barra.innerHTML = `
+          <div class="flex justify-between text-sm text-gray-600 mb-2">
+            <span>${vistasUnicas} de ${total} clases completadas</span>
+            <span>${porcentaje}% completado</span>
+          </div>
+          <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-green-500 progress-bar" style="width: ${porcentaje}%;"></div>
+          </div>
+        `;
+        app.appendChild(barra);
+
+        const listContainer = document.createElement("div");
+        listContainer.className = "space-y-3 fade-in";
+        
+        modulo.clases.forEach((clase, i) => {
+          const visto = vistasModulo.includes(i);
+          const claseItem = document.createElement("div");
+          claseItem.className = `card bg-white rounded-xl shadow-sm hover:shadow-md transition cursor-pointer 
+                                 ${visto ? 'border-l-4 border-green-500' : ''}`;
+          claseItem.onclick = () => seleccionarClase(i);
+          
+          claseItem.innerHTML = `
+            <div class="flex items-center justify-between p-4">
+              <div class="flex items-center overflow-hidden mr-2">
+                <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mr-3 ${visto ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}">
+                  ${visto ? '<i class="fas fa-check"></i>' : (i+1)}
+                </div>
+                <div class="truncate">
+                  <h3 class="font-medium truncate">${clase.titulo}</h3>
+                  <p class="text-sm text-gray-500 truncate">
+                    ${clase.materiales.length ? `${clase.materiales.length} materiales` : 'Sin materiales'} 
+                    ${clase.video ? '' : '• Video próximamente'}
+                  </p>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+            </div>
+          `;
+          listContainer.appendChild(claseItem);
+        });
+        app.appendChild(listContainer);
+        
+        // Botón para volver a módulos (visible siempre en esta vista)
+        const backBtn = document.createElement("button");
+        backBtn.className = "fixed bottom-6 left-6 bg-gray-700 text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition z-10";
+        backBtn.innerHTML = `<i class="fas fa-arrow-left mr-2"></i> Módulos`;
+        backBtn.onclick = irAModulos;
+        app.appendChild(backBtn);
+        
+
+      } else if (pagina === "video") {
+        // --- Página de Visualización de Video/Clase ---
+        if (moduloActual === null || claseActual === null || !curso.modulos[moduloActual] || !curso.modulos[moduloActual].clases[claseActual]) {
+             console.error("Error: Módulo o clase actual no válidos.");
+             mostrarError("Error al cargar la clase seleccionada.");
+             pagina = 'modulos'; // Volver a la lista de módulos
+             render();
+             return; 
+         }
+        const clase = curso.modulos[moduloActual].clases[claseActual];
+        
+        // Marcar como vista y guardar progreso (con delay para no saturar)
+        // Se hace aquí para que se marque aunque no haya video
+         setTimeout(() => {
+            marcarComoVista(moduloActual, claseActual);
+         }, 5000); // Marcar después de 5 segundos en la página
+
+        // Migas de pan
+        const breadcrumb = document.createElement("div");
+        breadcrumb.className = "flex flex-wrap items-center text-sm text-gray-600 mb-6 fade-in";
+        breadcrumb.innerHTML = `
+          <button class="hover:text-blue-700 flex items-center" onclick="irAModulos()">
+            <i class="fas fa-home mr-1"></i> Inicio
+          </button>
+          <span class="mx-2">›</span>
+          <button class="hover:text-blue-700" onclick="seleccionarModulo(${moduloActual})">
+            ${curso.modulos[moduloActual].nombre}
+          </button>
+          <span class="mx-2">›</span>
+          <span class="font-medium text-gray-800 truncate">${clase.titulo}</span>
+        `;
+        app.appendChild(breadcrumb);
+
+        const claseTitle = document.createElement("h2");
+        claseTitle.className = "text-2xl sm:text-3xl font-bold mb-6 fade-in";
+        claseTitle.innerText = clase.titulo;
+        app.appendChild(claseTitle);
+
+        const videoContainer = document.createElement("div");
+        videoContainer.className = "video-container mb-6 fade-in";
+        
+        if (clase.video) {
+          // Limpiar URL de video (ej. quitar parámetros extra si es de YouTube)
+          let cleanVideoUrl = clase.video;
+          if (cleanVideoUrl.includes("youtube.com/watch?v=")) {
+                const videoId = cleanVideoUrl.split('v=')[1].split('&')[0];
+                cleanVideoUrl = `https://www.youtube.com/embed/${videoId}`;
+           } else if (cleanVideoUrl.includes("youtu.be/")) {
+               const videoId = cleanVideoUrl.split('youtu.be/')[1].split('?')[0];
+               cleanVideoUrl = `https://www.youtube.com/embed/${videoId}`;
+           }
+           // Añadir otros limpiadores si usas Vimeo, Drive, etc.
+
+          videoContainer.innerHTML = `
+            <iframe 
+              src="${cleanVideoUrl}" 
+              width="100%" 
+              height="480" 
+              frameborder="0" 
+              allow="autoplay; encrypted-media; picture-in-picture" 
+              allowfullscreen
+              class="w-full h-[240px] sm:h-[360px] md:h-[480px] shadow-xl"
+            ></iframe>
+            <p class="text-center text-xs sm:text-sm text-gray-500 mt-2">
+                <i class="fas fa-info-circle mr-1"></i> Puedes usar el botón <i class="fas fa-expand mx-1"></i> para ver en pantalla completa.
+            </p>
+          `;
+        } else {
+          videoContainer.innerHTML = `
+            <div class="bg-gray-100 flex items-center justify-center h-[240px] sm:h-[360px] md:h-[480px] rounded-xl">
+              <div class="text-center p-6">
+                <i class="fas fa-video-slash text-gray-400 text-5xl mb-4"></i>
+                <p class="text-lg text-gray-500">Esta clase aún no tiene video.</p>
+                <p class="text-sm text-gray-400 mt-2">El contenido estará disponible pronto.</p>
+              </div>
+            </div>
+          `;
+        }
+        app.appendChild(videoContainer);
+
+        // Materiales de apoyo
+        if (clase.materiales && clase.materiales.length > 0) {
+          const materialesDiv = document.createElement("div");
+          materialesDiv.className = "mt-8 bg-white p-5 rounded-xl shadow-md fade-in";
+          materialesDiv.innerHTML = `
+            <h3 class="text-lg sm:text-xl font-bold mb-4 flex items-center">
+              <i class="fas fa-file-alt text-blue-500 mr-2"></i> Material de apoyo
+            </h3>
+            <div class="space-y-3">
+              ${clase.materiales.map((mat, index) => `
+                <a href="${mat.link}" target="_blank" rel="noopener noreferrer" class="material-link flex items-center p-2 hover:bg-blue-50 rounded-lg transition group">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 flex-shrink-0">${index + 1}</div>
+                  <span class="text-blue-600 group-hover:text-blue-800 group-hover:underline flex-grow truncate mr-2">${mat.nombre}</span>
+                  <i class="fas fa-external-link-alt text-gray-400 group-hover:text-blue-600"></i>
+                </a>
+              `).join('')}
+            </div>
+          `;
+          app.appendChild(materialesDiv);
+        }
+
+        // Navegación entre clases
+        const navDiv = document.createElement("div");
+        navDiv.className = "flex flex-wrap justify-between items-center gap-3 mt-8 mb-10 fade-in";
+        const totalClasesModulo = curso.modulos[moduloActual].clases.length;
+
+        // Botón Anterior
+        if (claseActual > 0) { // Hay clase anterior en este módulo
+            const prevBtn = document.createElement("button");
+            prevBtn.className = "nav-button flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition";
+            prevBtn.innerHTML = `<i class="fas fa-arrow-left mr-2"></i> Anterior`;
+            prevBtn.onclick = () => irAClase(claseActual - 1);
+            navDiv.appendChild(prevBtn);
+        } else if (moduloActual > 0) { // Es la primera clase, pero hay módulo anterior
+            const prevModuloBtn = document.createElement("button");
+            prevModuloBtn.className = "nav-button flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition";
+            prevModuloBtn.innerHTML = `<i class="fas fa-arrow-left mr-2"></i> Mód. Anterior`;
+            // Va a la última clase del módulo anterior
+            prevModuloBtn.onclick = () => irAModulo(moduloActual - 1, true); 
+            navDiv.appendChild(prevModuloBtn);
+        } else {
+             navDiv.appendChild(document.createElement("div")); // Espaciador para alinear
+        }
+
+        // Botón Siguiente
+         if (claseActual < totalClasesModulo - 1) { // Hay clase siguiente en este módulo
+             const nextBtn = document.createElement("button");
+             nextBtn.className = "nav-button flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition";
+             nextBtn.innerHTML = `Siguiente <i class="fas fa-arrow-right ml-2"></i>`;
+             nextBtn.onclick = () => irAClase(claseActual + 1);
+             navDiv.appendChild(nextBtn);
+         } else if (moduloActual < curso.modulos.length - 1) { // Es la última clase, pero hay módulo siguiente
+             const nextModuloBtn = document.createElement("button");
+             nextModuloBtn.className = "nav-button flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition";
+             nextModuloBtn.innerHTML = `Siguiente Módulo <i class="fas fa-arrow-right ml-2"></i>`;
+             // Va a la primera clase del siguiente módulo
+             nextModuloBtn.onclick = () => irAModulo(moduloActual + 1, false); 
+             navDiv.appendChild(nextModuloBtn);
+         } else { // Es la última clase del último módulo
+            // Mostrar botón de certificado si hay link
+             if (linkCertificado) {
+                 const certificadoBtn = document.createElement("a");
+                 certificadoBtn.href = linkCertificado;
+                 certificadoBtn.target = "_blank";
+                 certificadoBtn.rel = "noopener noreferrer";
+                 certificadoBtn.className = "nav-button flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition";
+                 certificadoBtn.innerHTML = `<i class="fas fa-certificate mr-2"></i> Solicitar Certificado`;
+                 navDiv.appendChild(certificadoBtn);
+             } else {
+                  navDiv.appendChild(document.createElement("div")); // Espaciador
+             }
+         }
+
+        app.appendChild(navDiv);
+        
+        // Botón flotante para volver a la lista de clases (móvil y escritorio)
+        const backToListBtn = document.createElement("button");
+        backToListBtn.className = "fixed bottom-6 left-6 bg-gray-700 text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition z-10";
+        backToListBtn.innerHTML = `<i class="fas fa-list mr-2"></i> Lista Clases`;
+        backToListBtn.onclick = () => seleccionarModulo(moduloActual); // Vuelve a la lista del módulo actual
+        app.appendChild(backToListBtn);
+      }
+      
+       // Scroll suave hacia arriba al cambiar de página (excepto si es login inicial)
+       if (pagina !== 'login' || isLoggedIn) {
+           window.scrollTo({ top: 0, behavior: 'smooth' });
+       }
+    }
+
+    // --- Funciones de Navegación y Lógica de UI ---
+
+    function seleccionarModulo(indexModulo) {
+        moduloActual = indexModulo;
+        pagina = "clases";
+        render();
+    }
+    
+    function seleccionarClase(indexClase) {
+        claseActual = indexClase;
+        pagina = "video";
+        // Guardar la última clase vista (incluso para invitados en localStorage)
+        if (isLoggedIn) {
+            // El guardado real se hará al marcar como vista o navegar
+        } else {
+            try {
+                localStorage.setItem("ultimaClase_invitado", JSON.stringify({ modulo: moduloActual, clase: claseActual }));
+            } catch(e) { console.error("Error guardando en localStorage:", e); }
+        }
+        render();
+    }
+
+    function irAModulos() {
+        pagina = "modulos";
+        // No resetear moduloActual/claseActual aquí para que "Continuar" funcione
+        render();
+    }
+    
+    function irAClase(indexClase) {
+        if (moduloActual !== null && curso.modulos[moduloActual] && curso.modulos[moduloActual].clases[indexClase]) {
+             claseActual = indexClase;
+             pagina = "video";
+              // Guardar última clase vista
+             if (!isLoggedIn) {
+                  try { localStorage.setItem("ultimaClase_invitado", JSON.stringify({ modulo: moduloActual, clase: claseActual })); } catch(e) {}
+             }
+             render();
+        } else {
+             console.error("Intento de ir a clase inválida:", indexClase);
+        }
+    }
+    
+    function irAModulo(indexModulo, irAlFinal = false) {
+         if (curso.modulos[indexModulo]) {
+             moduloActual = indexModulo;
+             // Si irAlFinal es true, vamos a la última clase, si no, a la primera (0)
+             claseActual = irAlFinal ? curso.modulos[indexModulo].clases.length - 1 : 0;
+             // Asegurarse que claseActual no sea negativo si el módulo está vacío
+             if (claseActual < 0) claseActual = 0; 
+             
+             pagina = "video"; // Ir directamente al video
+             
+              // Guardar última clase vista
+             if (!isLoggedIn) {
+                  try { localStorage.setItem("ultimaClase_invitado", JSON.stringify({ modulo: moduloActual, clase: claseActual })); } catch(e) {}
+             }
+             render();
+         } else {
+              console.error("Intento de ir a módulo inválido:", indexModulo);
+         }
+    }
+
+    function marcarComoVista(idxModulo, idxClase) {
+        if (idxModulo === null || idxClase === null) return;
+
+         // Lógica para 'vistas' (tanto para loggedIn como invitado)
+         if (!vistas[idxModulo]) {
+             vistas[idxModulo] = [];
+         }
+         // Añadir solo si no está ya incluida
+         if (!vistas[idxModulo].includes(idxClase)) {
+             vistas[idxModulo].push(idxClase);
+             debugLog(`Clase ${idxModulo}-${idxClase} marcada como vista.`);
+
+             // Guardar progreso
+             if (isLoggedIn) {
+                 guardarProgreso(); // Guardar en Apps Script
+             } else {
+                 // Guardar en localStorage para invitados
+                 try {
+                     localStorage.setItem("vistas_invitado", JSON.stringify(vistas));
+                     debugLog("Progreso de invitado guardado en localStorage.");
+                 } catch (e) {
+                     console.error("Error guardando vistas de invitado en localStorage:", e);
+                     mostrarError("No se pudo guardar tu progreso en este navegador.");
+                 }
+             }
+             
+             // Opcional: Actualizar UI si es necesario (ej. barra de progreso si está visible)
+             // Podrías llamar a render() pero sería menos eficiente. 
+             // Sería mejor actualizar solo los elementos visuales del progreso.
+         } else {
+              debugLog(`Clase ${idxModulo}-${idxClase} ya estaba marcada como vista.`);
+         }
+    }
+
+
+    // --- Inicialización ---
+    obtenerDatos(); // Carga los datos del curso y luego llama a render()
+
+  </script>
 </body>
 </html>
